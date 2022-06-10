@@ -1,6 +1,7 @@
 package ar.edu.unq.epers.unidad5
 
 import ar.edu.unq.epers.unidad5.dao.ProductoDAO
+import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Precio
 import ar.edu.unq.epers.unidad5.model.Producto
 import ar.edu.unq.epers.unidad5.model.Usuario
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.function.Consumer
 import java.util.stream.IntStream
+import kotlin.streams.toList
 
 @SpringBootTest
 class Unidad5EjemploMongodbSpringApplicationTests {
@@ -27,47 +29,78 @@ class Unidad5EjemploMongodbSpringApplicationTests {
             Zona("Quilmes", "Rivadavia", "435", "Argentina"),
             Zona("Ciudad De Buenos Aires", "Callao", "1500", "Argentina")
         )
-        val productos = listOf(
-            Producto(CODIGO_PRODUCTO_1, "Triple de chocolate", "Capitan del Espacio"),
-            Producto(CODIGO_PRODUCTO_2, "Dulce de leche 500 grs", "La Serenisima"),
-            Producto(CODIGO_PRODUCTO_3, "Sprite 2.25lts", "Cocacola"),
-            Producto(CODIGO_PRODUCTO_4, "Express x3", "Terrabusi")
-        )
-        IntStream.range(0, 2).forEach { i: Int ->
-            productos.forEach(Consumer { p: Producto ->
-                zonas.forEach(Consumer { z: Zona? ->
-                    usuarios.forEach(
-                        Consumer { u: Usuario? ->
-                            val precio = Precio(z, u, i + p.codigo.toInt(), p)
-                            p.addPrecio(precio)
-                        }
-                    )
-                })
+
+        val productos = IntStream.range(0, 1000).mapToObj { i: Int ->
+            val producto = Producto(i.toString(), "Producto $i", "Marca $i")
+            zonas.forEach(Consumer { z: Zona? ->
+                usuarios.forEach(
+                    Consumer { u: Usuario? ->
+                        val precio = Precio(z, u, i + producto.codigo.toInt(), producto)
+                        producto.addPrecio(precio)
+                    }
+                )
             })
+            producto
         }
-        productoDao.saveAll(productos)
+        productoDao.saveAll(productos.toList())
+    }
+
+    @Test
+    fun saveAndGetByCode() {
+        val zonaUS = Zona("Amazon St.", "1024", "Dellaware", "USA")
+        val zonaUK = Zona("Amazon Rd.", "1024", "London", "UK")
+        val user = Usuario("claudio")
+        val producto = Producto("0001", "Longboard", "Santa Cruz")
+        producto.addPrecio(Precio(zonaUS, user, 78, producto))
+        producto.addPrecio(Precio(zonaUK, user, 82, producto))
+        productoDao.save(producto)
+        val producto2 = productoDao.getByCode(producto.codigo)
+        Assertions.assertEquals("0001", producto2!!.codigo)
+        Assertions.assertEquals("Longboard", producto2.nombre)
+        Assertions.assertEquals("Santa Cruz", producto2.marca)
+        Assertions.assertEquals(2, producto2.precios.size.toLong())
     }
 
     @Test
     fun findByMarca() {
-        val productos = productoDao.findByBrand("Terrabusi")
+        val productos = productoDao.findByBrand("Marca 200")
         Assertions.assertEquals(1, productos.size.toLong())
         val producto = productos[0]
-        Assertions.assertEquals("444", producto!!.codigo)
-        Assertions.assertEquals("Express x3", producto.nombre)
-        Assertions.assertEquals("Terrabusi", producto.marca)
+        Assertions.assertEquals("200", producto!!.codigo)
+        Assertions.assertEquals("Producto 200", producto.nombre)
+        Assertions.assertEquals("Marca 200", producto.marca)
     }
+
+    @Test
+    fun findByPrecio() {
+        var productos = productoDao.findByPrice(446)
+        Assertions.assertEquals(
+            1,
+            productos.size.toLong(),
+            "Todos los productos deben tener algún precio igual a 446",
+        )
+        productos = productoDao.findByPrice(0)
+        Assertions.assertEquals(
+            1,
+            productos.size.toLong(),
+            "Solo el primer producto debe tener precios menores a 222",
+        )
+    }
+
+    @Test
+    fun testPrecioPromedio() {
+        val precios: List<PrecioPromedio> = productoDao.getPrecioPromedio(listOf("121", "558"))
+
+        Assertions.assertEquals("558", precios[0].codigo)
+        Assertions.assertEquals(1116.0, precios[0].value, 0.toDouble())
+        Assertions.assertEquals("121", precios[1].codigo)
+        Assertions.assertEquals(242.0, precios[1].value, 0.toDouble())
+    }
+
 
     @AfterEach
     fun deleteAll(){
         productoDao.deleteAll()
-    }
-
-    companion object {
-        private const val CODIGO_PRODUCTO_1 = "111"
-        private const val CODIGO_PRODUCTO_2 = "222"
-        private const val CODIGO_PRODUCTO_3 = "333"
-        private const val CODIGO_PRODUCTO_4 = "444"
     }
 
 }
