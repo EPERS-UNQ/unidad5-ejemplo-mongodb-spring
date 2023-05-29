@@ -88,6 +88,12 @@ class Unidad5EjemploMongodbSpringApplicationTests {
     }
 
     @Test
+    fun findByPriceRange() {
+        val productos = productoService.findByPriceRange(3, 5)
+        Assertions.assertEquals(1, productos.size)
+    }
+
+    @Test
     fun testPrecioPromedio() {
         val precios: List<PrecioPromedio> = productoService.getPrecioPromedio(listOf("121", "558"))
 
