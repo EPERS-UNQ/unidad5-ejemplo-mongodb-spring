@@ -1,11 +1,11 @@
 package ar.edu.unq.epers.unidad5
 
-import ar.edu.unq.epers.unidad5.dao.ProductoDAO
 import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Precio
 import ar.edu.unq.epers.unidad5.model.Producto
 import ar.edu.unq.epers.unidad5.model.Usuario
 import ar.edu.unq.epers.unidad5.model.Zona
+import ar.edu.unq.epers.unidad5.service.ProductoService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -14,12 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.function.Consumer
 import java.util.stream.IntStream
-import kotlin.streams.toList
 
 @SpringBootTest
 class Unidad5EjemploMongodbSpringApplicationTests {
+
     @Autowired
-    lateinit var productoDao: ProductoDAO
+    lateinit var productoService: ProductoService
 
     @BeforeEach
     fun setup() {
@@ -42,7 +42,7 @@ class Unidad5EjemploMongodbSpringApplicationTests {
             })
             producto
         }
-        productoDao.saveAll(productos.toList())
+        productoService.saveAll(productos.toList())
     }
 
     @Test
@@ -53,9 +53,9 @@ class Unidad5EjemploMongodbSpringApplicationTests {
         val producto = Producto("0001", "Longboard", "Santa Cruz")
         producto.addPrecio(Precio(zonaUS, user, 78, producto))
         producto.addPrecio(Precio(zonaUK, user, 82, producto))
-        productoDao.save(producto)
-        val producto2 = productoDao.getByCode(producto.codigo)
-        Assertions.assertEquals("0001", producto2!!.codigo)
+        productoService.save(producto)
+        val producto2 = productoService.getByCode(producto.codigo)
+        Assertions.assertEquals("0001", producto2.codigo)
         Assertions.assertEquals("Longboard", producto2.nombre)
         Assertions.assertEquals("Santa Cruz", producto2.marca)
         Assertions.assertEquals(2, producto2.precios.size.toLong())
@@ -63,23 +63,23 @@ class Unidad5EjemploMongodbSpringApplicationTests {
 
     @Test
     fun findByMarca() {
-        val productos = productoDao.findByBrand("Marca 200")
+        val productos = productoService.findByBrand("Marca 200")
         Assertions.assertEquals(1, productos.size.toLong())
         val producto = productos[0]
-        Assertions.assertEquals("200", producto!!.codigo)
+        Assertions.assertEquals("200", producto.codigo)
         Assertions.assertEquals("Producto 200", producto.nombre)
         Assertions.assertEquals("Marca 200", producto.marca)
     }
 
     @Test
     fun findByPrecio() {
-        var productos = productoDao.findByPrice(446)
+        var productos = productoService.findByPrice(446)
         Assertions.assertEquals(
             1,
             productos.size.toLong(),
             "Todos los productos deben tener algún precio igual a 446",
         )
-        productos = productoDao.findByPrice(0)
+        productos = productoService.findByPrice(0)
         Assertions.assertEquals(
             1,
             productos.size.toLong(),
@@ -89,7 +89,7 @@ class Unidad5EjemploMongodbSpringApplicationTests {
 
     @Test
     fun testPrecioPromedio() {
-        val precios: List<PrecioPromedio> = productoDao.getPrecioPromedio(listOf("121", "558"))
+        val precios: List<PrecioPromedio> = productoService.getPrecioPromedio(listOf("121", "558"))
 
         Assertions.assertEquals("558", precios[0].codigo)
         Assertions.assertEquals(1116.0, precios[0].value, 0.toDouble())
@@ -100,7 +100,7 @@ class Unidad5EjemploMongodbSpringApplicationTests {
 
     @AfterEach
     fun deleteAll(){
-        productoDao.deleteAll()
+        productoService.deleteAll()
     }
 
 }
