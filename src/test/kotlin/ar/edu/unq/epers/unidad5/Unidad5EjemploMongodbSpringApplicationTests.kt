@@ -76,13 +76,13 @@ class Unidad5EjemploMongodbSpringApplicationTests {
         Assertions.assertEquals("0001", producto2.codigo)
         Assertions.assertEquals("Longboard", producto2.nombre)
         Assertions.assertEquals("Santa Cruz", producto2.marca)
-        Assertions.assertEquals(2, producto2.precios.size.toLong())
+        Assertions.assertEquals(2, producto2.precios.size)
     }
 
     @Test
     fun findByMarca() {
         val productos = productoService.findByBrand("Marca 200")
-        Assertions.assertEquals(1, productos.size.toLong())
+        Assertions.assertEquals(1, productos.size)
         val producto = productos[0]
         Assertions.assertEquals("200", producto.codigo)
         Assertions.assertEquals("Producto 200", producto.nombre)
@@ -94,13 +94,13 @@ class Unidad5EjemploMongodbSpringApplicationTests {
         var productos = productoService.findByPrice(446)
         Assertions.assertEquals(
             1,
-            productos.size.toLong(),
+            productos.size,
             "Todos los productos deben tener algún precio igual a 446",
         )
         productos = productoService.findByPrice(0)
         Assertions.assertEquals(
             1,
-            productos.size.toLong(),
+            productos.size,
             "Solo el primer producto debe tener precios menores a 2",
         )
     }
