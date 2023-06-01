@@ -1,11 +1,10 @@
 package ar.edu.unq.epers.unidad5.dao
 
-import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
+import ar.edu.unq.epers.unidad5.model.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Producto
 import org.springframework.data.mongodb.repository.Aggregation
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.Query
-
 
 interface ProductoDAO : MongoRepository<Producto, String> {
 

@@ -1,6 +1,6 @@
 package ar.edu.unq.epers.unidad5.service
 
-import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
+import ar.edu.unq.epers.unidad5.model.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Producto
 
 interface ProductoService {

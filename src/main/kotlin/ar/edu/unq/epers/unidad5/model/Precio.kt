@@ -1,7 +1,5 @@
 package ar.edu.unq.epers.unidad5.model
 
-import org.bson.codecs.pojo.annotations.BsonIgnore
-
 class Precio {
     var zona: Zona? = null
     var user: Usuario? = null

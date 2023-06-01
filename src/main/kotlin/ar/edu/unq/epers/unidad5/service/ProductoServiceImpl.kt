@@ -1,7 +1,7 @@
 package ar.edu.unq.epers.unidad5.service
 
 import ar.edu.unq.epers.unidad5.dao.ProductoDAO
-import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
+import ar.edu.unq.epers.unidad5.model.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Producto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

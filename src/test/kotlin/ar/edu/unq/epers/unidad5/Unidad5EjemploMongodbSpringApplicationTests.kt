@@ -1,6 +1,6 @@
 package ar.edu.unq.epers.unidad5
 
-import ar.edu.unq.epers.unidad5.dto.PrecioPromedio
+import ar.edu.unq.epers.unidad5.model.PrecioPromedio
 import ar.edu.unq.epers.unidad5.model.Precio
 import ar.edu.unq.epers.unidad5.model.Producto
 import ar.edu.unq.epers.unidad5.model.Usuario
@@ -32,17 +32,35 @@ class Unidad5EjemploMongodbSpringApplicationTests {
 
         val productos = IntStream.range(0, 1000).mapToObj { i: Int ->
             val producto = Producto(i.toString(), "Producto $i", "Marca $i")
-            zonas.forEach(Consumer { z: Zona? ->
-                usuarios.forEach(
-                    Consumer { u: Usuario? ->
-                        val precio = Precio(z, u, i + producto.codigo.toInt(), producto)
-                        producto.addPrecio(precio)
-                    }
-                )
-            })
+            añadirPreciosAUnProductoSegunZonasUsuariosEIndice(zonas, usuarios, i, producto)
             producto
         }
         productoService.saveAll(productos.toList())
+    }
+
+    private fun añadirPreciosAUnProductoSegunZonasUsuariosEIndice(
+        zonas: List<Zona>,
+        usuarios: List<Usuario>,
+        indice: Int,
+        producto: Producto
+    ) {
+        zonas.forEach(Consumer { z: Zona? ->
+            añadirPreciosAUnProductoSegunUsuariosZonaEIndice(usuarios, z, indice, producto)
+        })
+    }
+
+    private fun añadirPreciosAUnProductoSegunUsuariosZonaEIndice(
+        usuarios: List<Usuario>,
+        zona: Zona?,
+        indice: Int,
+        producto: Producto
+    ) {
+        usuarios.forEach(
+            Consumer { u: Usuario? ->
+                val precio = Precio(zona, u, indice + producto.codigo.toInt(), producto)
+                producto.addPrecio(precio)
+            }
+        )
     }
 
     @Test
@@ -83,7 +101,7 @@ class Unidad5EjemploMongodbSpringApplicationTests {
         Assertions.assertEquals(
             1,
             productos.size.toLong(),
-            "Solo el primer producto debe tener precios menores a 222",
+            "Solo el primer producto debe tener precios menores a 2",
         )
     }
 
