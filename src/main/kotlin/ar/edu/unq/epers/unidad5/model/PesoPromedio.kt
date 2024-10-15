@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
-class PrecioPromedio() {
+class PesoPromedio {
     @Id
-    var codigo: String? = null
-    var value:Double = 0.toDouble()
+    var nombre: String? = null
+    var valor:Double = 0.toDouble()
 }
