@@ -8,11 +8,10 @@ import lombok.*;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
-public class Usuario {
+public class Dungeon {
+    private String nombre;
 
-    private String username;
-
-    public Usuario(String username) {
-        this.username = username;
+    public Dungeon(String nombre) {
+        this.nombre = nombre;
     }
 }

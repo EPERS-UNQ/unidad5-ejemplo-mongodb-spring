@@ -11,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
 @Document
-public class PrecioPromedio {
+public class PesoPromedio {
     @Id
-    private String codigo;
-    private double value = 0;
+    private String nombre;
+    private double valor = 0;
 }
