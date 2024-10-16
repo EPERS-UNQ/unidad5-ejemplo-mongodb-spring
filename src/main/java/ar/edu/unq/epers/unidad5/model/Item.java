@@ -13,9 +13,7 @@ import java.util.List;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
-@Document
 public class Item {
-    @Id
     private String nombre;
     private int peso;
     private List<Dungeon> obtenibleEn = new ArrayList<>();
